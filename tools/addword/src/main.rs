@@ -22,6 +22,9 @@ struct Args {
 
     #[arg(short = 'i', long = "interactive", help = "强制交互模式")]
     interactive: bool,
+
+    #[arg(long = "no-deploy", help = "添加后不触发重新部署")]
+    no_deploy: bool,
 }
 
 fn find_rime_dir() -> Option<PathBuf> {
@@ -191,6 +194,153 @@ fn add_entry_main(lines: &mut Vec<String>, word: &str, code: &str, weight: u32, 
     true
 }
 
+fn deployer_name() -> &'static str {
+    #[cfg(target_os = "windows")]
+    {
+        "WeaselDeployer.exe"
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        "rime_deployer"
+    }
+}
+
+fn fd_search_roots() -> Vec<&'static str> {
+    let mut roots = Vec::new();
+
+    #[cfg(target_os = "windows")]
+    {
+        roots.push(r"C:\Program Files");
+        roots.push(r"C:\Program Files (x86)");
+        roots.push(r"D:\Program Files");
+        roots.push(r"E:\Program Files");
+    }
+    #[cfg(target_os = "macos")]
+    {
+        roots.push("/Applications");
+        roots.push("/usr/local");
+        roots.push("/opt/homebrew");
+    }
+    #[cfg(target_os = "linux")]
+    {
+        roots.push("/usr");
+        roots.push("/usr/local");
+        roots.push("/opt");
+    }
+
+    roots
+}
+
+fn hardcoded_paths() -> Vec<PathBuf> {
+    let mut paths = Vec::new();
+
+    #[cfg(target_os = "windows")]
+    {
+        paths.push(PathBuf::from(r"C:\Program Files\Weasel\WeaselDeployer.exe"));
+        paths.push(PathBuf::from(r"C:\Program Files (x86)\Weasel\WeaselDeployer.exe"));
+        paths.push(PathBuf::from(r"D:\Program Files\Weasel\WeaselDeployer.exe"));
+    }
+    #[cfg(target_os = "macos")]
+    {
+        paths.push(PathBuf::from("/usr/local/bin/rime_deployer"));
+        paths.push(PathBuf::from("/Library/Input Methods/Squirrel.app/Contents/MacOS/Squirrel"));
+    }
+    #[cfg(target_os = "linux")]
+    {
+        paths.push(PathBuf::from("/usr/bin/rime_deployer"));
+        paths.push(PathBuf::from("/usr/local/bin/rime_deployer"));
+    }
+
+    paths
+}
+
+fn search_deployer_with_fd(name: &str) -> Option<PathBuf> {
+    if which::which("fd").is_err() {
+        return None;
+    }
+
+    for root in fd_search_roots() {
+        let root_path = Path::new(root);
+        if !root_path.exists() {
+            continue;
+        }
+
+        let output = std::process::Command::new("fd")
+            .arg("-t")
+            .arg("f")
+            .arg("--max-depth")
+            .arg("6")
+            .arg(name)
+            .arg(root)
+            .output()
+            .ok()?;
+
+        if output.status.success() {
+            let line = String::from_utf8_lossy(&output.stdout)
+                .lines()
+                .next()?
+                .trim()
+                .to_string();
+            if !line.is_empty() {
+                return Some(PathBuf::from(line));
+            }
+        }
+    }
+    None
+}
+
+fn run_deployer(path: &Path) -> bool {
+    eprintln!("  [deploy] 正在运行部署程序...");
+    std::process::Command::new(path)
+        .spawn()
+        .map(|_| {
+            eprintln!("  [deploy] 部署已触发");
+            true
+        })
+        .unwrap_or_else(|e| {
+            eprintln!("  [deploy] 启动失败：{e}");
+            false
+        })
+}
+
+fn deploy() -> bool {
+    let name = deployer_name();
+
+    // 1. 先用 fd 搜索
+    if let Some(path) = search_deployer_with_fd(name) {
+        return run_deployer(&path);
+    }
+
+    // 2. 再检查硬编码路径
+    for path in hardcoded_paths() {
+        if path.exists() {
+            return run_deployer(&path);
+        }
+    }
+
+    // 3. 最后检查 PATH
+    if let Ok(path) = which::which(name) {
+        return run_deployer(&path);
+    }
+
+    false
+}
+
+fn try_deploy(no_deploy: bool) {
+    if no_deploy {
+        return;
+    }
+
+    if deploy() {
+        eprintln!("\n[info] 正在重新部署 Rime，请稍候...");
+    } else {
+        eprintln!("\n[info] 词条已添加，请手动重新部署 Rime 使其生效。");
+        eprintln!("  Windows: 右键托盘图标 → 重新部署");
+        eprintln!("  macOS:   系统语言菜单 → 重新部署");
+        eprintln!("  Linux:   输入法菜单 → 重新部署");
+    }
+}
+
 fn run_cli(args: &Args, rime_dir: &Path) -> io::Result<()> {
     let main_path = rime_dir.join(MAIN_DICT);
     let extra_path = rime_dir.join(EXTRA_DICT);
@@ -224,6 +374,7 @@ fn run_cli(args: &Args, rime_dir: &Path) -> io::Result<()> {
     let mut out: Vec<String> = lines[..=header_end].to_vec();
     out.append(&mut body);
     write_lines(&extra_path, &out)?;
+    try_deploy(args.no_deploy);
     Ok(())
 }
 
@@ -287,6 +438,7 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> io::Result<()> {
     if count > 0 {
         println!("\n完成，共添加 {count} 条");
     }
+    try_deploy(args.no_deploy);
     Ok(())
 }
 
