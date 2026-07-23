@@ -94,42 +94,109 @@ fn search_deployer_with_fd(name: &str) -> Option<PathBuf> {
 fn run_deployer(path: &Path) -> bool {
     let name = path.file_stem().unwrap_or_default().to_string_lossy();
     let is_weasel = name.contains("WeaselDeployer");
+    let is_squirrel = name == "Squirrel";
 
     let mut cmd = std::process::Command::new(path);
     if is_weasel {
         cmd.arg("/deploy");
+    } else if is_squirrel {
+        cmd.arg("--reload");
     }
 
     eprintln!("  [deploy] 正在运行部署程序...");
-    cmd.spawn()
-        .map(|_| {
+    match cmd.spawn() {
+        Ok(_) => {
             eprintln!("  [deploy] 部署已触发");
             true
-        })
-        .unwrap_or_else(|e| {
+        }
+        Err(e) => {
             eprintln!("  [deploy] 启动失败：{e}");
             false
-        })
+        }
+    }
+}
+
+/// macOS 多级降级：触发 Squirrel 重载
+///
+/// 第1级: 直接执行 Squirrel --reload（可能被 macOS 安全策略拦截）
+/// 第2级: pkill -HUP Squirrel（发 SIGHUP 信号，无需执行目标二进制）
+/// 第3级: open Squirrel.app（通过 Launch Services，绕过直接 execve）
+#[cfg(target_os = "macos")]
+fn deploy_squirrel() -> bool {
+    let squirrel_exe = PathBuf::from("/Library/Input Methods/Squirrel.app/Contents/MacOS/Squirrel");
+    let squirrel_app = PathBuf::from("/Library/Input Methods/Squirrel.app");
+
+    // 第1级：直接执行 Squirrel --reload
+    if squirrel_exe.exists() {
+        eprintln!("  [deploy] 正在运行部署程序...");
+        match std::process::Command::new(&squirrel_exe).arg("--reload").spawn() {
+            Ok(_) => {
+                eprintln!("  [deploy] 部署已触发");
+                return true;
+            }
+            Err(e) => {
+                eprintln!("  [deploy] 直接执行失败 ({e})，尝试其他方式...");
+            }
+        }
+    }
+
+    // 第2级：pkill -HUP Squirrel（发 SIGHUP 信号触发热重载）
+    eprintln!("  [deploy] 尝试通过信号重载 Squirrel...");
+    match std::process::Command::new("pkill").arg("-HUP").arg("Squirrel").spawn() {
+        Ok(_) => {
+            eprintln!("  [deploy] 已发送重载信号");
+            return true;
+        }
+        Err(e) => {
+            eprintln!("  [deploy] 信号发送失败：{e}");
+        }
+    }
+
+    // 第3级：通过 Launch Services 打开 .app bundle
+    if squirrel_app.exists() {
+        eprintln!("  [deploy] 尝试通过 Launch Services 打开 Squirrel...");
+        match std::process::Command::new("open").arg(&squirrel_app).spawn() {
+            Ok(_) => {
+                eprintln!("  [deploy] 已打开 Squirrel，请在菜单中手动选择「重新部署」");
+                return true;
+            }
+            Err(e) => {
+                eprintln!("  [deploy] Launch Services 打开失败：{e}");
+            }
+        }
+    }
+
+    false
 }
 
 pub fn deploy() -> bool {
+    // macOS 优先使用 Squirrel 专属多级降级流程
+    #[cfg(target_os = "macos")]
+    if deploy_squirrel() {
+        return true;
+    }
+
     let name = deployer_name();
 
     // 1. 先用 fd 搜索
     if let Some(path) = search_deployer_with_fd(name) {
-        return run_deployer(&path);
+        if run_deployer(&path) {
+            return true;
+        }
     }
 
     // 2. 再检查硬编码路径
     for path in hardcoded_paths() {
-        if path.exists() {
-            return run_deployer(&path);
+        if path.exists() && run_deployer(&path) {
+            return true;
         }
     }
 
     // 3. 最后检查 PATH
     if let Ok(path) = which::which(name) {
-        return run_deployer(&path);
+        if run_deployer(&path) {
+            return true;
+        }
     }
 
     false
@@ -145,7 +212,7 @@ pub fn try_deploy(no_deploy: bool) {
     } else {
         eprintln!("\n[info] 词条已添加，请手动重新部署 Rime 使其生效。");
         eprintln!("  Windows: 右键托盘图标 → 重新部署");
-        eprintln!("  macOS:   系统语言菜单 → 重新部署");
+        eprintln!("  macOS:   系统语言菜单（鼠须管）→ 重新部署");
         eprintln!("  Linux:   输入法菜单 → 重新部署");
     }
 }
