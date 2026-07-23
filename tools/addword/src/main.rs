@@ -372,9 +372,16 @@ fn search_deployer_with_fd(name: &str) -> Option<PathBuf> {
 }
 
 fn run_deployer(path: &Path) -> bool {
+    let name = path.file_stem().unwrap_or_default().to_string_lossy();
+    let is_weasel = name.contains("WeaselDeployer");
+
+    let mut cmd = std::process::Command::new(path);
+    if is_weasel {
+        cmd.arg("/deploy");
+    }
+
     eprintln!("  [deploy] 正在运行部署程序...");
-    std::process::Command::new(path)
-        .spawn()
+    cmd.spawn()
         .map(|_| {
             eprintln!("  [deploy] 部署已触发");
             true
