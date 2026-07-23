@@ -47,6 +47,7 @@ ascii_composer:                           # 中/西文切换配置
     switch_key:                           # 切换键行为
         Shift_L: commit_text              # 左Shift：有编码时先上屏再切西文
         Shift_R: commit_text              # 右Shift：同上
+        Escape: commit_text               # Escape：用于 Vim 适配，先上屏再切西文
 
 speller:                                  # 拼写规则配置
                                           # （使用默认规则，无额外配置）
