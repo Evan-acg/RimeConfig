@@ -49,7 +49,9 @@ engine:                                   # 引擎配置：用户按键 → proc
           enable_user_dict: false         # 不记录用户词
 
 ascii_composer:                           # 中/西文切换配置
+    good_old_caps_lock: true              # Caps Lock 输出大写字母（传统行为）
     switch_key:                           # 切换键行为
+        Caps_Lock: clear                  # Caps Lock：清空编码并切换西文/大写
         Shift_L: commit_code              # 左Shift：有编码时上屏编码字母，再切西文
         Shift_R: commit_code              # 右Shift：同上
         Escape: commit_text               # Escape：用于 Vim 适配，先上屏候选项再切西文
