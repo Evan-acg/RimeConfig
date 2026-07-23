@@ -9,6 +9,7 @@ pub enum AppError {
     HeaderMissing(String),
     RimeDirNotFound,
     EncodeFailed(String),
+    UserCancel,
 }
 
 impl fmt::Display for AppError {
@@ -19,6 +20,7 @@ impl fmt::Display for AppError {
             AppError::HeaderMissing(dict) => write!(f, "{dict} 缺少 YAML header 结束符"),
             AppError::RimeDirNotFound => write!(f, "未找到 Rime 用户目录，请通过 -d 指定或设置 RIME_USER_DIR 环境变量"),
             AppError::EncodeFailed(word) => write!(f, "存在未收录的字，无法自动编码: {word}"),
+            AppError::UserCancel => write!(f, "操作已取消"),
         }
     }
 }

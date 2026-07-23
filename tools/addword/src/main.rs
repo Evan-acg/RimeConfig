@@ -108,6 +108,28 @@ fn build_char_map(paths: &[PathBuf]) -> CharMap {
     CharMap::from_entries(&combined)
 }
 
+/// Ask user for codes of missing characters, insert them into char_map.
+/// Returns false if user cancels.
+fn fill_missing_codes(word: &str, missing: &[char], char_map: &mut CharMap) -> AppResult<()> {
+    eprintln!("  [info] \"{word}\" 中存在以下未收录的字: {}",
+        missing.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(" "));
+
+    let stdin = io::stdin();
+    for &ch in missing {
+        print!("  请为 \"{ch}\" 输入五笔编码: ");
+        io::stdout().flush()?;
+        let mut input = String::new();
+        stdin.lock().read_line(&mut input)?;
+        let input = input.trim().to_string();
+        if input.is_empty() {
+            return Err(AppError::UserCancel);
+        }
+        char_map.insert(ch, input.clone());
+        eprintln!("    [ok] {ch} → {input}");
+    }
+    Ok(())
+}
+
 fn run_cli(args: &Args, rime_dir: &Path) -> AppResult<()> {
     let main_path = rime_dir.join(MAIN_DICT);
     let extra_path = rime_dir.join(EXTRA_DICT);
@@ -121,15 +143,47 @@ fn run_cli(args: &Args, rime_dir: &Path) -> AppResult<()> {
     }
 
     let word = args.word.as_deref().unwrap_or("");
-    let code = args.code.as_deref().unwrap_or("");
-    let weight = args.weight.unwrap_or(10);
-
-    if word.is_empty() || code.is_empty() {
-        return Err(AppError::EncodeFailed("需要提供词和编码".into()));
+    if word.is_empty() {
+        return Err(AppError::EncodeFailed("需要提供词".into()));
     }
 
+    let mut char_map = build_char_map(&[main_path.clone(), extra_path.clone()]);
+    let weight = args.weight.unwrap_or(10);
+
+    let code = match args.code.as_deref() {
+        Some(c) if !c.is_empty() => c.to_string(),
+        _ => {
+            let encoder = Wubi86Encoder;
+            let result = encoder.encode(word, &char_map);
+            match result.code {
+                Some(c) => {
+                    eprintln!("  [auto] {word} → {c}");
+                    c
+                }
+                None if !result.missing_chars.is_empty() => {
+                    if args.silent {
+                        return Err(AppError::EncodeFailed(format!(
+                            "\"{word}\" 编码失败，未收录的字: {}",
+                            result.missing_chars.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(" ")
+                        )));
+                    }
+                    fill_missing_codes(word, &result.missing_chars, &mut char_map)?;
+                    let encoder = Wubi86Encoder;
+                    match encoder.encode(word, &char_map).code {
+                        Some(c) => {
+                            eprintln!("  [auto] {word} → {c}");
+                            c
+                        }
+                        None => return Err(AppError::EncodeFailed(format!("\"{word}\" 编码失败"))),
+                    }
+                }
+                _ => return Err(AppError::EncodeFailed(format!("\"{word}\" 编码失败"))),
+            }
+        }
+    };
+
     let mut dict = load_dict(&extra_path)?;
-    let entry = Entry::new(word.to_string(), code.to_string(), weight);
+    let entry = Entry::new(word.to_string(), code.clone(), weight);
 
     if dict.add_entry(entry.clone()) {
         eprintln!("  [ok] {}  {}  {}", entry.word, entry.code, entry.weight);
@@ -162,7 +216,7 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
         create_extra_dict(&extra_path)?;
     }
 
-    let char_map = build_char_map(&[main_path, extra_path.clone()]);
+    let mut char_map = build_char_map(&[main_path, extra_path.clone()]);
     let mut dict = load_dict(&extra_path)?;
 
     let stdin = io::stdin();
@@ -187,7 +241,8 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
 
         let code = if code.is_empty() {
             let encoder = Wubi86Encoder;
-            match encoder.encode(&word, &char_map) {
+            let result = encoder.encode(&word, &char_map);
+            match result.code {
                 Some(encoded) => {
                     print!("  -> 自动生成编码：{word} -> {encoded}");
                     if args.yes {
@@ -206,8 +261,39 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
                         encoded
                     }
                 }
-                None => {
-                    eprintln!("  [error] 存在未收录的字，请手动输入编码");
+                None if !result.missing_chars.is_empty() => {
+                    if fill_missing_codes(&word, &result.missing_chars, &mut char_map).is_err() {
+                        eprintln!("  [skip] 已取消");
+                        continue;
+                    }
+                    let encoder = Wubi86Encoder;
+                    match encoder.encode(&word, &char_map).code {
+                        Some(encoded) => {
+                            print!("  -> 自动生成编码：{word} -> {encoded}");
+                            if args.yes {
+                                println!();
+                                encoded
+                            } else {
+                                print!("  确认添加？(Y/n): ");
+                                io::stdout().flush()?;
+                                let mut confirm = String::new();
+                                stdin.lock().read_line(&mut confirm)?;
+                                let confirm = confirm.trim().to_lowercase();
+                                if confirm == "n" || confirm == "no" {
+                                    eprintln!("  [skip] 已取消");
+                                    continue;
+                                }
+                                encoded
+                            }
+                        }
+                        None => {
+                            eprintln!("  [error] 编码失败，请手动输入编码");
+                            continue;
+                        }
+                    }
+                }
+                _ => {
+                    eprintln!("  [error] 编码失败，请手动输入编码");
                     continue;
                 }
             }

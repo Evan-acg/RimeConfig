@@ -49,6 +49,10 @@ impl CharMap {
         self.inner.contains_key(&ch)
     }
 
+    pub fn insert(&mut self, ch: char, code: String) {
+        self.inner.insert(ch, code);
+    }
+
     pub fn into_inner(self) -> HashMap<char, String> {
         self.inner
     }
