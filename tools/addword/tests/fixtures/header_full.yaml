@@ -1,0 +1,26 @@
+---
+name: test_dict
+version: "0.1"
+sort: by_weight
+import_tables:
+  - wubi86_jidian_extra
+columns:
+  - text
+  - code
+  - weight
+  - stem
+encoder:
+  exclude_patterns:
+    - '^z.*$'
+  rules:
+    - length_equal: 2
+      formula: "AaAbBaBb"
+    - length_equal: 3
+      formula: "AaBaCaCb"
+    - length_in_range: [4, 10]
+      formula: "AaBaCaZa"
+...
+工	a	20
+戈	a	10
+式	aa	20
+戒	aa	10
