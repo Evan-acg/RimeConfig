@@ -112,7 +112,6 @@ CarPlay	carp
 兰博基尼	ufan	20
 自吸	thke	20
 涡轮增压	ilfd	20
-
 ## 摩托车
 单盘	ujte
 双盘	ccte
@@ -149,7 +148,6 @@ CBR650R	cbr	10
 九号E300p	vtkg
 Ninja400	ninj
 Ninja650	ninj
-
 ## 王者荣耀
 黄忠	amkh
 太乙真人	dnfw
@@ -231,7 +229,6 @@ Ninja650	ninj
 蚩奼	bhvt
 元流之子	fipb
 六耳	uybg
-
 ## 影视
 黑镜	lfqu
 夏洛特烦恼	ditn
@@ -294,7 +291,6 @@ Ninja650	ninj
 敦刻尔克	yyqd
 谍影重重	yjtt
 满城尽待黄金甲	ifnl
-
 ## 歌手
 谢春花	ydaw
 王贰浪	gaiy
@@ -333,7 +329,6 @@ Ninja650	ninj
 刘烨溦	yoim
 凤凰传奇	mmwd
 张杰	xtso	20
-
 ## 演员
 周韵	mfuj
 姜文	ugyy
@@ -360,7 +355,6 @@ Ninja650	ninj
 范伟	aiwf
 倪妮	wvvn	20
 易烊千玺	jotq
-
 ## 歌曲
 寄居蟹	pnqe
 斑马	gycn
@@ -374,7 +368,6 @@ Ninja650	ninj
 依然范特西	wqas	20
 范特西	atsg	20
 祝融	pygk
-
 ## 通用短语
 一两个月	ggwe
 母胎	xgec
@@ -383,7 +376,7 @@ Ninja650	ninj
 底库	yqyl
 旁通	upce
 延长线	ttxg	100
-　	cokg		全角空格 co空格
+cokg	
 困意	lsuj
 小笼包	itqn
 一泻千里	gitj
@@ -1143,7 +1136,6 @@ FM	fm	5
 海盗船	iute
 助记	egyn	20
 ⎵	pwst	10
-　	pwst
 师出同门	jbmu
 卧牛山	armm
 单行道	utut	30
@@ -1182,7 +1174,7 @@ SwiftUI	swif
 货拉拉	wrru
 小浪底水库	iiyy
 毛绒	tfxa
- 遛弯儿	qyqt	20
+遛弯儿	qyqt	20
 踏春	khdw	20
 横纵比	sxxx
 水豚	iiee
@@ -1652,7 +1644,6 @@ HiFi	hifi	20
 版本号	tskg
 平齐	guyj
 减速带	uggk	20
-
 ## 软件名
 懂车帝	nlup
 阿里云盘	bjft
@@ -1668,7 +1659,6 @@ PyCharm	pych	10
 WebStorm	webs
 青藤之恋	gapy	20
 青藤	geae
-
 ## 品牌
 美特斯邦威	utad
 薛记炒货	ayow
@@ -1748,7 +1738,6 @@ Ulanzi	ulan
 固特异	ltna
 乐图	qilt	18
 森海塞尔	sipq
-
 ## 区域
 莒县	akeg
 孙家庄	bpyf
@@ -1781,7 +1770,6 @@ Ulanzi	ulan
 福来士	pgfg	20
 博山	fgmm	20
 灵岩寺	vmff
-
 ## 医学
 直肠癌	feuk
 肛痿炎	euoo
@@ -1806,155 +1794,151 @@ Ulanzi	ulan
 优甲乐	wlqi
 左甲状腺素钠片	dlut	200
 糠酸莫米松鼻喷雾剂	osay
-
 ## emoji动物
-🐶	qtqk		狗
-🐱	qtal		猫
-🐭	vnu		鼠
-🐠	qgf		鱼
-🐯	ftha		虎
-🦖	amdx		恐龙
-🐞	jsjh		螵虫
-🐙	ujqg		章鱼
-🐔	wccq		公鸡
-🦃	oocq		火鸡
-🐑	xrud		绵羊
-🐬	itee		海豚
-🐘	ddqj		大象
-🦎	nkha		壁虎
-🦌	ynj		鹿
-🐵	qtbb		猴子
-🐺	qty		狼
-🦉	quyw		猫头鹰
-🐳	qgqg		鲸鱼
-🐛	ttjh		毛毛虫
-🐜	jcjy		蚂蚁
-🦇	jyjg		蝙蝠
-🦕	amdx		恐龙
-🦒	tcyn		长颈鹿
-🕸	jjmq		蜘蛛网
-🦜	mmga		鹦鹉
-🐤	ihcq		小鸡
-🐡	isee		河豚
-🦞	dxjg		龙虾
-🦘	wavn		袋鼠
-🦙	udcp		羊驼
-🐪	ctcp		骆驼
-🦐	jghy		虾
-🐊	qgqg		鳄鱼
-🐲	dxn		龙
-🦓	gycn		斑马
-🦏	iscn		河马
-🦑	qnma		乌贼
-🦂	jjbb		蝎子
-🦛	iscn		河马
-🐏	xrud		绵羊
-🦈	iiqg		鲨鱼
-🦭	itee		海豹
-🐉	dxn		龙
-🦬	rhk		牛
-🦫	vnu		鼠
-🦩	mspt		丹顶鹤
-🦧	qtqt		猩猩
-🐆	eeqy		豹
-🦚	bniw		孔雀
-🐻‍❄️	ceqt		熊猫
-🦢	trng		鹅
-🐋	qgqg		鲸鱼
-🦦	scng		树懒
-🐈‍⬛	qtal		猫
-🐚	itjl		海螺
-🏇🏻	pfnc		赛马
-🐢	qnqj		乌龟
-🦆	lqbb		鸭子
-🕊	wgbb		鸽子
-🦍	qtqt		猩猩
-🐐	mmud		山羊
-🦄	qqul		独角兽
-🦋	jdja		蝴蝶
-🐄	verh		奶牛
-🐮	rhk		牛
-🐕‍🦺	nydg		导盲犬
-🦮	qtqk		狗
-🐕	qtqk		狗
-🐹	vnu		鼠
-🐹	wbvn		仓鼠
-🐽	qtfj		猪
-🐷	qtfj		猪
-🙈	rddm		掩面
-🙈	rgew		捂脸
-🦔	gmqt		刺猬
-
+🐶	qtqk
+🐱	qtal
+🐭	vnu
+🐠	qgf
+🐯	ftha
+🦖	amdx
+🐞	jsjh
+🐙	ujqg
+🐔	wccq
+🦃	oocq
+🐑	xrud
+🐬	itee
+🐘	ddqj
+🦎	nkha
+🦌	ynj
+🐵	qtbb
+🐺	qty
+🦉	quyw
+🐳	qgqg
+🐛	ttjh
+🐜	jcjy
+🦇	jyjg
+🦕	amdx
+🦒	tcyn
+🕸	jjmq
+🦜	mmga
+🐤	ihcq
+🐡	isee
+🦞	dxjg
+🦘	wavn
+🦙	udcp
+🐪	ctcp
+🦐	jghy
+🐊	qgqg
+🐲	dxn
+🦓	gycn
+🦏	iscn
+🦑	qnma
+🦂	jjbb
+🦛	iscn
+🐏	xrud
+🦈	iiqg
+🦭	itee
+🐉	dxn
+🦬	rhk
+🦫	vnu
+🦩	mspt
+🦧	qtqt
+🐆	eeqy
+🦚	bniw
+🐻‍❄️	ceqt
+🦢	trng
+🐋	qgqg
+🦦	scng
+🐈‍⬛	qtal
+🐚	itjl
+🏇🏻	pfnc
+🐢	qnqj
+🦆	lqbb
+🕊	wgbb
+🦍	qtqt
+🐐	mmud
+🦄	qqul
+🦋	jdja
+🐄	verh
+🐮	rhk
+🐕‍🦺	nydg
+🦮	qtqk
+🐕	qtqk
+🐹	vnu
+🐹	wbvn
+🐽	qtfj
+🐷	qtfj
+🙈	rddm
+🙈	rgew
+🦔	gmqt
 ## emoji水果
-🍏	agjs		苹果
-🍎	agjs		苹果
-🍐	tjs		梨
-🍊	swbb		橙子
-🍋	spsa		柠檬
-🍌	tjaw		香蕉
-🍇	aqaq		葡萄
-🍓	ajat		草莓
-🫐	ajat		蓝莓
-🍈	kprc		哈密瓜
-🍒	smsi		樱桃
-🍑	sibb		桃子
-🥭	ayjs		芒果
-🍍	aial		菠萝
-🥥	sbbb		椰子
-🥝	qqsi		猕猴桃
-🍆	albb		茄子
-🥑	rijs		牛油果
-🥦	suaw		西兰花
-🥦	aeaw		菜花
-🥬	imae		油菜
-🥒	amrc		黄瓜
-🌶	ugsh		辣椒
-🫑	aesu		菜椒
-🌽	gyoy		玉米
-🥕	dahh		胡萝卜
-🧄	ddaf		大蒜
-🧄	afi		蒜
-🧅	iuaq		洋葱
-🥔	ffgk		土豆
-🍠	xaal		红薯
-🍠	fbrc		地瓜
-🥚	cqnh		鸡蛋
-🍗	cqev		鸡腿
-🍭	ssoy		棒棒糖
-🥢	tnbb		筷子
-🍺	kris		啤酒
-🍻	kris		啤酒
-🥂	kjis		啤酒
-🥂	kjis		干杯
-🥮	eeqn		月饼
-
+🍏	agjs
+🍎	agjs
+🍐	tjs
+🍊	swbb
+🍋	spsa
+🍌	tjaw
+🍇	aqaq
+🍓	ajat
+🫐	ajat
+🍈	kprc
+🍒	smsi
+🍑	sibb
+🥭	ayjs
+🍍	aial
+🥥	sbbb
+🥝	qqsi
+🍆	albb
+🥑	rijs
+🥦	suaw
+🥦	aeaw
+🥬	imae
+🥒	amrc
+🌶	ugsh
+🫑	aesu
+🌽	gyoy
+🥕	dahh
+🧄	ddaf
+🧄	afi
+🧅	iuaq
+🥔	ffgk
+🍠	xaal
+🍠	fbrc
+🥚	cqnh
+🍗	cqev
+🍭	ssoy
+🥢	tnbb
+🍺	kris
+🍻	kris
+🥂	kjis
+🥂	kjis
+🥮	eeqn
 ## emoji运动
-⚽️	khgf		足球
-🏀	tjgf		篮球
-🏈	ssgf		橄榄球
-⚾️	sdgf		棒球
-🥎	sdgf		棒球
-🎾	mqgf		网球
-🏐	rdgf		排球
-🏉	ssgf		橄榄球
-🥏	nute		飞盘
-🎱	ckgf		台球
-🏓	rrgf		乒乓球
-🏸	ntgf		羽毛球
-⛳️	yqfw		高尔夫
-🪁	mqtq		风筝
-🤿	ifii		潜水
-⛷	imfv		滑雪
-🎿	imfv		滑雪
-🏂	imfv		滑雪
-🏂	ujsr		单板
-🥌	uifp		冰壶
-⛸	imui		滑冰
-🛹	imsr		滑板
-🥊	udfm		拳击
-🥋	kuut		跆拳道
-🎮	iyca		游戏
-
+⚽️	khgf
+🏀	tjgf
+🏈	ssgf
+⚾️	sdgf
+🥎	sdgf
+🎾	mqgf
+🏐	rdgf
+🏉	ssgf
+🥏	nute
+🎱	ckgf
+🏓	rrgf
+🏸	ntgf
+⛳️	yqfw
+🪁	mqtq
+🤿	ifii
+⛷	imfv
+🎿	imfv
+🏂	imfv
+🏂	ujsr
+🥌	uifp
+⛸	imui
+🛹	imsr
+🥊	udfm
+🥋	kuut
+🎮	iyca
 ## 社会事件
 新型冠状病毒	ugpg
 小汤山	iimm
@@ -1966,116 +1950,114 @@ N号房	nkyn
 健康码	wydc
 封控	ffrp
 提灯定损	ropr
-
 ## emoji
-🙂	tmtt		微笑
-🙃	tmtt		微笑
-😆	ddtt		大笑
-😂	ttkk		笑哭
-🤣	ttkk		笑哭
-🥰	ep		爱
-🤩	kffg		哇
-🥶	dndn		尴尬
-🤗	tada		tada
-👍	xk		强
-👍	rhk		牛
-😭	ddkk		大哭
-🥳	ydpy		庆祝
-😎	tdgk		智囊
-😉	ryhv		挤眼
-😉	ryhv		眨眼
-😊	skep		可爱
-😏	klkl		嘿嘿
-😝	kftd		吐舌
-😛	kftd		吐舌
-😋	vbkt		好吃
-😚	usus		亲亲
-😘	epwq		爱你
-😗	usus		亲亲
-😙	usus		亲亲
-🤩	wow		wow
-😤	tgrn		生气
-😳	ks		呆
-😡	tgrn		生气
-🤬	kkww		骂人
-🤫	khag		嘘
-🤔	lnft		思考
-🤗	tada		tada
-🤗	wala		wala
-😓	ifh		汗
-🤮	tgug		生病
-🤒	ntoa		发烧
-🤧	thiu		鼻涕
-🤧	dgjh		感冒
-👽	qjww		外星人
-🤐	ufkh		闭嘴
-🥱	kwqw		哈欠
-🥱	lsbn		困了
-😴	htip		睡觉
-😪	htip		睡觉
-😪	htud		睡着
-💀	meme		骷髅
-💩	ococ		粑粑
-💩	wgwg		便便
-👻	rqc		鬼
-🙂	tmtt		微笑
-🙃	tmtt		微笑
-😆	ddtt		大笑
-😂	ttkk		笑哭
-🤣	ttkk		笑哭
-🥰	ep		爱
-🤩	kffg		哇
-🥶	dndn		尴尬
-🤗	tada		tada
-👍	xk		强
-👍	rhk		牛
-😭	ddkk		大哭
-🥳	ydpy		庆祝
-😎	tdgk		智囊
-😉	ryhv		挤眼
-😉	ryhv		眨眼
-😊	skep		可爱
-😏	klkl		嘿嘿
-😝	kftd		吐舌
-😛	kftd		吐舌
-😋	vbkt		好吃
-😚	usus		亲亲
-😘	epwq		爱你
-😗	usus		亲亲
-😙	usus		亲亲
-🤩	wow		wow
-😤	tgrn		生气
-😳	ks		呆
-😡	tgrn		生气
-🤬	kkww		骂人
-🤫	khag		嘘
-🤔	lnft		思考
-🤗	tada		tada
-🤗	wala		wala
-😓	ifh		汗
-🤮	tgug		生病
-🤒	ntoa		发烧
-🤧	thiu		鼻涕
-🤧	dgjh		感冒
-👽	qjww		外星人
-🤐	ufkh		闭嘴
-🥱	kwqw		哈欠
-🥱	lsbn		困了
-😴	htip		睡觉
-😪	htip		睡觉
-😪	htud		睡着
-💀	meme		骷髅
-💩	ococ		粑粑
-💩	wgwg		便便
-👻	rqc		鬼
-😈	ahgo		邪恶
-✌🏻	bbh		耶
-✌🏻	yeah		耶
-🤦🏻‍♂️	kdb		呃
-🙏🏻	pypy		祈祷
-⭐	ggjt		五星
+🙂	tmtt
+🙃	tmtt
+😆	ddtt
+😂	ttkk
+🤣	ttkk
+🥰	ep
+🤩	kffg
+🥶	dndn
+🤗	tada
+👍	xk
+👍	rhk
+😭	ddkk
+🥳	ydpy
+😎	tdgk
+😉	ryhv
+😉	ryhv
+😊	skep
+😏	klkl
+😝	kftd
+😛	kftd
+😋	vbkt
+😚	usus
+😘	epwq
+😗	usus
+😙	usus
+🤩	wow
+😤	tgrn
+😳	ks
+😡	tgrn
+🤬	kkww
+🤫	khag
+🤔	lnft
+🤗	tada
+🤗	wala
+😓	ifh
+🤮	tgug
+🤒	ntoa
+🤧	thiu
+🤧	dgjh
+👽	qjww
+🤐	ufkh
+🥱	kwqw
+🥱	lsbn
+😴	htip
+😪	htip
+😪	htud
+💀	meme
+💩	ococ
+💩	wgwg
+👻	rqc
+🙂	tmtt
+🙃	tmtt
+😆	ddtt
+😂	ttkk
+🤣	ttkk
+🥰	ep
+🤩	kffg
+🥶	dndn
+🤗	tada
+👍	xk
+👍	rhk
+😭	ddkk
+🥳	ydpy
+😎	tdgk
+😉	ryhv
+😉	ryhv
+😊	skep
+😏	klkl
+😝	kftd
+😛	kftd
+😋	vbkt
+😚	usus
+😘	epwq
+😗	usus
+😙	usus
+🤩	wow
+😤	tgrn
+😳	ks
+😡	tgrn
+🤬	kkww
+🤫	khag
+🤔	lnft
+🤗	tada
+🤗	wala
+😓	ifh
+🤮	tgug
+🤒	ntoa
+🤧	thiu
+🤧	dgjh
+👽	qjww
+🤐	ufkh
+🥱	kwqw
+🥱	lsbn
+😴	htip
+😪	htip
+😪	htud
+💀	meme
+💩	ococ
+💩	wgwg
+👻	rqc
+😈	ahgo
+✌🏻	bbh
+✌🏻	yeah
+🤦🏻‍♂️	kdb
+🙏🏻	pypy
+⭐	ggjt
 ⭐	jtjt
-
 ## 游戏名
 刺客信条	gpwt	100
 极品飞车	sknl
@@ -2101,7 +2083,6 @@ Trimui Smart Pro	trim
 Trimui Bricks	trim
 TrimUI	trim	20
 刺激战场	gihf
-
 ## 三四叠字
 众	cccc
 厽	cccc
@@ -2141,7 +2122,6 @@ TrimUI	trim	20
 龘	cccc
 麤	cccc
 叕	cccc
-
 ## 化妆品
 奥洛菲	tiad
 欧莱雅	aaah
@@ -2150,7 +2130,6 @@ TrimUI	trim	20
 碧思泉	glri
 魅力可诗	rlsy
 美肌颜	ueut
-
 ## 软件开发
 伪类	wyod
 西数	sgov
@@ -2171,7 +2150,6 @@ Kotlin	kot
 ElementUI	elem
 码流	dciy
 天地图	gflt
-
 ## 物联网
 通断	ceon
 动环	fcgg
@@ -2193,21 +2171,18 @@ ElementUI	elem
 逆变器	uykk
 智图	tdlt
 暖通	jece
-
 ## 口语
 姐们	vewu	100
 爷们儿	wwqt
 爷们	wqwu
 姐们儿	vwqt
 装逼	ufgk
-
 ## 特殊字符
-✓	qctf		勾选
-✓	cfkg		对号
+✓	qctf
+✓	cfkg
 ²	guyy
 ³	uuyy
 Ω	aqvx
-
 ## 建筑
 角磨机	qysm
 三角钢	dqqm	20
@@ -2216,11 +2191,9 @@ ElementUI	elem
 地漆	fbis
 黄河文化博物馆群	aiyv
 超然楼	fqso	20
-
 ## 网红
 李佳琦	swgd	20
 陈一发	bgnt	20
-
 ## 人名
 董明珠	ajgr
 王自如	gtvk
@@ -2239,7 +2212,6 @@ ElementUI	elem
 王朔	ggub
 马思纯	clxg
 哈里斯	kjad
-
 ## 摄影
 定焦	pgwy
 全画幅	wgmh	14
@@ -2256,7 +2228,6 @@ ElementUI	elem
 三脚架	delk	20
 柔光箱	cits	20
 长焦	tawy
-
 ## 运动员
 樊振东	srai
 马龙	cndx
@@ -2273,7 +2244,6 @@ ElementUI	elem
 邓亚萍	cgai	5
 全红婵	wxvu
 二手房	fryn
-
 ## 食品
 蒸饺	abqn
 米村拌饭	osrq
@@ -2286,3 +2256,4 @@ ElementUI	elem
 朝颜	fjut	10
 月白	eerr	10
 沐野	isjf	10
+数据结构	orxs	10
