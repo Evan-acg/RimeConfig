@@ -1,4 +1,5 @@
 use clap::Parser;
+use std::collections::HashMap;
 use std::fs;
 use std::io::{self, BufRead, Write};
 use std::path::{Path, PathBuf};
@@ -22,6 +23,9 @@ struct Args {
 
     #[arg(short = 'i', long = "interactive", help = "强制交互模式")]
     interactive: bool,
+
+    #[arg(short = 'y', long = "yes", help = "交互模式自动编码时跳过确认")]
+    yes: bool,
 
     #[arg(long = "no-deploy", help = "添加后不触发重新部署")]
     no_deploy: bool,
@@ -179,6 +183,84 @@ fn entry_exists<'a>(lines: &'a [String], word: &str, code: &str) -> Option<&'a S
 
 fn format_entry(word: &str, code: &str, weight: u32) -> String {
     format!("{word}\t{code}\t{weight}")
+}
+
+fn build_char_map(paths: &[PathBuf]) -> HashMap<char, String> {
+    let mut map: HashMap<char, (String, u32)> = HashMap::new();
+
+    for path in paths {
+        if !path.exists() {
+            continue;
+        }
+        if let Ok(lines) = read_lines(path) {
+            if let Some(end) = find_header_end(&lines) {
+                for line in &lines[end + 1..] {
+                    let line = line.trim();
+                    if line.is_empty() || line.starts_with('#') || line.starts_with("##") {
+                        continue;
+                    }
+                    let parts: Vec<&str> = line.split('\t').collect();
+                    if parts.len() < 2 {
+                        continue;
+                    }
+                    let text = parts[0];
+                    let code = parts[1];
+                    if text.chars().count() == 1 {
+                        let weight = parts.get(2).and_then(|w| w.parse::<u32>().ok()).unwrap_or(0);
+                        let ch = text.chars().next().unwrap();
+                        let entry = map.entry(ch).or_insert_with(|| (code.to_string(), weight));
+                        if weight > entry.1 {
+                            *entry = (code.to_string(), weight);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    map.into_iter().map(|(k, v)| (k, v.0)).collect()
+}
+
+fn take1(s: &str) -> String {
+    s.chars().take(1).collect()
+}
+
+fn take2(s: &str) -> String {
+    s.chars().take(2).collect()
+}
+
+fn encode_word(word: &str, char_map: &HashMap<char, String>) -> Option<String> {
+    let chars: Vec<char> = word.chars().collect();
+    let n = chars.len();
+    if n < 2 {
+        return None;
+    }
+
+    let codes: Vec<&str> = chars
+        .iter()
+        .map(|c| char_map.get(c).map(|s| s.as_str()))
+        .collect::<Option<Vec<_>>>()?;
+
+    match n {
+        2 => {
+            let code = format!("{}{}", take2(codes[0]), take2(codes[1]));
+            Some(code)
+        }
+        3 => {
+            let code = format!("{}{}{}", take1(codes[0]), take1(codes[1]), take2(codes[2]));
+            Some(code)
+        }
+        _ => {
+            let code = format!(
+                "{}{}{}{}",
+                take1(codes[0]),
+                take1(codes[1]),
+                take1(codes[2]),
+                take1(codes[n - 1])
+            );
+            Some(code)
+        }
+    }
 }
 
 fn add_entry_main(lines: &mut Vec<String>, word: &str, code: &str, weight: u32, silent: bool) -> bool {
@@ -391,6 +473,9 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> io::Result<()> {
         create_extra_dict(&extra_path)?;
     }
 
+    // Build character→code map from main + extra dictionaries
+    let char_map = build_char_map(&[main_path.clone(), extra_path.clone()]);
+
     let all_lines = read_lines(&extra_path)?;
     let header_end = find_header_end(&all_lines).expect("extra 字典缺少 ... 结束符");
     let mut body_lines: Vec<String> = all_lines[header_end + 1..].to_vec();
@@ -398,7 +483,7 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> io::Result<()> {
     let stdin = io::stdin();
     let mut count = 0u32;
 
-    println!("\n交互式造词（输入空词退出）");
+    println!("\n交互式造词（输入空词退出，编码为空时自动生成）");
     loop {
         print!("词: ");
         io::stdout().flush()?;
@@ -414,10 +499,36 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> io::Result<()> {
         let mut code = String::new();
         stdin.lock().read_line(&mut code)?;
         let code = code.trim().to_string();
-        if code.is_empty() {
-            eprintln!("  [error] 编码不能为空");
-            continue;
-        }
+
+        // Auto-encode when code is empty
+        let code = if code.is_empty() {
+            match encode_word(&word, &char_map) {
+                Some(encoded) => {
+                    print!("  → 自动生成编码：{word} → {encoded}");
+                    if args.yes {
+                        println!();
+                        encoded
+                    } else {
+                        print!("  确认添加？(Y/n): ");
+                        io::stdout().flush()?;
+                        let mut confirm = String::new();
+                        stdin.lock().read_line(&mut confirm)?;
+                        let confirm = confirm.trim().to_lowercase();
+                        if confirm == "n" || confirm == "no" {
+                            eprintln!("  [skip] 已取消");
+                            continue;
+                        }
+                        encoded
+                    }
+                }
+                None => {
+                    eprintln!("  [error] 存在未收录的字，请手动输入编码");
+                    continue;
+                }
+            }
+        } else {
+            code
+        };
 
         print!("权重（默认10）: ");
         io::stdout().flush()?;
