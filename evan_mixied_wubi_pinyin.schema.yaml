@@ -12,7 +12,7 @@ dependencies:                             # 依赖的其他方案列表
 
 switches:                                 # 状态开关列表（可在输入法菜单中切换）
     - name: ascii_mode                    # 中/西文切换开关
-      reset: 0                            # 默认中文
+      reset: 1                            # 默认西文
       states: [中文, 西文]                 # 两种状态显示名称
     - name: full_shape                    # 全角/半角开关
       states: [半角, 全角]                # 两种状态显示名称
