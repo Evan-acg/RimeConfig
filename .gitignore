@@ -1,2 +1,18 @@
-**/
-**/*.swp
+# Rime 编译产物（每次部署重新生成）
+build/
+
+# Rime 用户数据库（个人词频、输入习惯）
+*.userdb/
+*.userdb.txt
+
+# Rust 编译产物
+tools/addword/target/
+
+# 编辑器临时文件
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
