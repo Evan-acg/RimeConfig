@@ -1,0 +1,77 @@
+schema:                                    # 方案元数据起始
+    schema_id: evan_mixied_wubi_pinyin    # 方案唯一标识符（ID）
+    name: "Evan's 五笔拼音混合方案"         # 方案显示名称
+    version: '0.0.1'                      # 版本号
+    author:                               # 作者列表
+        - Evan                            # 作者名称
+description: |                            # 方案描述（多行字符串）
+    这是一个自建的五笔拼音混合输入方案     # 描述内容
+
+dependencies:                             # 依赖的其他方案列表
+    - pinyin_simp                         # 依赖"简化字拼音"方案（用于反查）
+
+switches:                                 # 状态开关列表（可在输入法菜单中切换）
+    - name: full_shape                    # 全角/半角开关
+      states: [半角, 全角]                # 两种状态显示名称
+    - name: ascii_punct                   # 中西文标点开关
+      states: [。，, ．，]                # 两种状态：中文标点、西文标点
+
+engine:                                   # 引擎配置：用户按键 → processors 逐级处理（某个 processor 消费了按键则后续不再处理）
+                                          # → speller 拼出编码 → segmentors 切段 → translators 生成候选 → 用户选词上屏
+    processors:                           # [阶段一] 按键处理器：用户每按一键，按顺序交给各 processor 依次尝试处理
+                                          # 若某个 processor 消费了按键（如 punctuator 输出标点），后续 processor 不再处理
+        - ascii_composer                  # 判断是否进入西文/大写模式（如按 Shift 切换中英）
+        - recognizer                      # 识别特殊模式（如 http:// 开头触发网址识别，或 ` 触发反查）
+        - key_binder                      # 处理快捷键（如 [ ] 翻页、Ctrl+` 唤出方案菜单）
+        - speller                         # 拼写处理器：将按键序列拼成编码（如 ww → 五笔码）
+        - punctuator                      # 标点符号处理器：将按键映射为标点（如 / → 、）
+        - selector                        # 候选词选择器：处理数字键选择候选
+        - navigator                       # 候选列表导航：处理上下左右移动光标/翻页
+        - express_editor                  # 编辑器：最终上屏输出
+    segmentors:                           # [阶段二] 分词器：当有输入串需生成候选时，将输入串切分为逻辑段
+                                          # 如 "http://abc" → ascii_segmentor 识别西文段、matcher 匹配 URL 模式
+        - ascii_segmentor                 # 西文段落识别（全大写/网址等标记为西文）
+        - matcher                         # 匹配器：识别预定义模式（网址、邮件、反查前缀等）
+        - abc_segmentor                   # 拼写段落识别：处理普通编码输入（五笔/拼音字母）
+        - punct_segmentor                 # 标点段落识别：处理标点符号
+    translators:                          # [阶段三] 翻译器：对切分后的每个编码段，生成候选词列表
+                                          # 不同翻译器对不同标签的段生效
+        - punct_translator                # 标点翻译器：将标点段转为对应符号
+        - reverse_lookup_translator       # 反查翻译器：用拼音词典反查五笔编码（处理带 reverse_lookup 标签的段）
+        - table_translator                # 码表翻译器：查主码表 evan_mixied_wubi_pinyin 生成候选
+
+speller:                                  # 拼写规则配置
+                                          # （使用默认规则，无额外配置）
+
+abc_segmentor:                            # 拼写段落识别器配置
+    extra_tags:                           # 附加标签
+        - reverse_lookup                  # 允许反查标签（用于拼音反查）
+
+reverse_lookup:                           # 反查配置（用拼音查五笔编码）
+    dictionary: pinyin_simp               # 反查使用的词典（简化字拼音）
+    prefix: "`"                           # 反查前缀：` 之后的才是拼音
+    suffix: "'"                           # 反查后缀：' 表示拼音输入结束
+    tips: 〔拼音〕                          # 反查时显示的提示标签
+    preedit_format:                       # 反查编码的显示格式转换
+        - xform/([nl])v/$1ü/              # nv/lv -> nü/lü 显示
+        - xform/([nl])ue/$1üe/            # nue/lue -> nüe/lüe 显示
+        - xform/([jqxy])v/$1u/            # jv/qv/xv/yv -> ju/qu/xu/yu 显示
+
+translator:                               # 主翻译器配置
+    dictionary: evan_mixied_wubi_pinyin   # 主码表文件（不含.yaml后缀）
+    enable_charset_filter: true           # 启用字符集过滤
+    enable_completion: true               # 启用逐键提示
+    enable_sentence: false                # 关闭造句模式
+    enable_user_dict: true                # 开启用户词典
+    enable_encoder: true                  # 开启自动造词
+    encode_commit_history: true           # 对已上屏的词组自动编码入用户词典
+    max_phrase_length: 10                 # 自动造词的最大词组长度（字数）
+
+punctuator:                               # 标点符号配置
+    import_preset: default                # 从默认配置导入标点符号映射表
+key_binder:                               # 快捷键配置
+    import_preset: default                # 从默认配置导入快捷键绑定
+recognizer:                               # 模式识别配置（识别特殊输入模式）
+    import_preset: default                # 从默认配置导入识别规则
+    patterns:                             # 自定义识别模式
+        reverse_lookup: "`[a-z]*'?$"      # 反查模式：`开头 + 拼音字母（如 `zhong）
