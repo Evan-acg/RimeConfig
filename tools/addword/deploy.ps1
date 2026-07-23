@@ -16,8 +16,8 @@ if (-not $NoBuild) {
     }
 }
 
-$Source = Join-Path $ProjectRoot "target\release\rime-addword.exe"
-$Dest = Join-Path $Target "rime-addword.exe"
+$Source = Join-Path $ProjectRoot "target\release\adw.exe"
+$Dest = Join-Path $Target "adw.exe"
 
 if (-not (Test-Path $Source)) {
     Write-Error "Not found: $Source"
