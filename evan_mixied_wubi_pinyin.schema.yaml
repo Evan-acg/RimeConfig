@@ -42,6 +42,11 @@ engine:                                   # 引擎配置：用户按键 → proc
         - punct_translator                # 标点翻译器：将标点段转为对应符号
         - reverse_lookup_translator       # 反查翻译器：用拼音词典反查五笔编码（处理带 reverse_lookup 标签的段）
         - table_translator                # 码表翻译器：查主码表 evan_mixied_wubi_pinyin 生成候选
+        - translator: table_translator    # z-拼音翻译器：z 开头走拼音
+          tag: zpinyin                    # 处理 zpinyin 标签的段
+          dictionary: pinyin_simp         # 使用拼音词典
+          enable_sentence: false          # 关闭造句
+          enable_user_dict: false         # 不记录用户词
 
 ascii_composer:                           # 中/西文切换配置
     switch_key:                           # 切换键行为
@@ -55,6 +60,7 @@ speller:                                  # 拼写规则配置
 abc_segmentor:                            # 拼写段落识别器配置
     extra_tags:                           # 附加标签
         - reverse_lookup                  # 允许反查标签（用于拼音反查）
+        - zpinyin                         # 允许 z-拼音标签
 
 reverse_lookup:                           # 反查配置（用拼音查五笔编码）
     dictionary: pinyin_simp               # 反查使用的词典（简化字拼音）
@@ -80,7 +86,10 @@ punctuator:                               # 标点符号配置
     import_preset: default                # 从默认配置导入标点符号映射表
 key_binder:                               # 快捷键配置
     import_preset: default                # 从默认配置导入快捷键绑定
+    bindings:                             # 自定义快捷键
+        - {when: has_menu, accept: Return, send: space}   # Enter → 选中高亮候选
 recognizer:                               # 模式识别配置（识别特殊输入模式）
     import_preset: default                # 从默认配置导入识别规则
     patterns:                             # 自定义识别模式
         reverse_lookup: "`[a-z]*'?$"      # 反查模式：`开头 + 拼音字母（如 `zhong）
+        zpinyin: "^z[a-z]+$"             # z-拼音模式：z 开头 + 字母（如 zhong）
