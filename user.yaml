@@ -1,2 +1,6 @@
 var:
-  last_build_time: 1784826041
+  last_build_time: 1784827554
+  previously_selected_schema: evan_mixied_wubi_pinyin
+  schema_access_time:
+    evan_mixied_wubi_pinyin: 1784827471
+    pinyin_simp: 1784826644

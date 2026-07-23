@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 which = "7"
+colored = "2"
 
 [profile.release]
 lto = true

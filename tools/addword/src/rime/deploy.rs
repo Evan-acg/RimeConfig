@@ -1,3 +1,4 @@
+use crate::style;
 use std::path::{Path, PathBuf};
 
 pub fn deployer_name() -> &'static str {
@@ -103,14 +104,14 @@ fn run_deployer(path: &Path) -> bool {
         cmd.arg("--reload");
     }
 
-    eprintln!("  [deploy] 正在运行部署程序...");
+    style::deploy("正在运行部署程序...");
     match cmd.spawn() {
         Ok(_) => {
-            eprintln!("  [deploy] 部署已触发");
+            style::deploy("部署已触发");
             true
         }
         Err(e) => {
-            eprintln!("  [deploy] 启动失败：{e}");
+            style::deploy(format_args!("启动失败：{e}"));
             false
         }
     }
@@ -128,40 +129,40 @@ fn deploy_squirrel() -> bool {
 
     // 第1级：直接执行 Squirrel --reload
     if squirrel_exe.exists() {
-        eprintln!("  [deploy] 正在运行部署程序...");
+        style::deploy("正在运行部署程序...");
         match std::process::Command::new(&squirrel_exe).arg("--reload").spawn() {
             Ok(_) => {
-                eprintln!("  [deploy] 部署已触发");
+                style::deploy("部署已触发");
                 return true;
             }
             Err(e) => {
-                eprintln!("  [deploy] 直接执行失败 ({e})，尝试其他方式...");
+                style::deploy(format_args!("直接执行失败 ({e})，尝试其他方式..."));
             }
         }
     }
 
     // 第2级：pkill -HUP Squirrel（发 SIGHUP 信号触发热重载）
-    eprintln!("  [deploy] 尝试通过信号重载 Squirrel...");
+    style::deploy("尝试通过信号重载 Squirrel...");
     match std::process::Command::new("pkill").arg("-HUP").arg("Squirrel").spawn() {
         Ok(_) => {
-            eprintln!("  [deploy] 已发送重载信号");
+            style::deploy("已发送重载信号");
             return true;
         }
         Err(e) => {
-            eprintln!("  [deploy] 信号发送失败：{e}");
+            style::deploy(format_args!("信号发送失败：{e}"));
         }
     }
 
     // 第3级：通过 Launch Services 打开 .app bundle
     if squirrel_app.exists() {
-        eprintln!("  [deploy] 尝试通过 Launch Services 打开 Squirrel...");
+        style::deploy("尝试通过 Launch Services 打开 Squirrel...");
         match std::process::Command::new("open").arg(&squirrel_app).spawn() {
             Ok(_) => {
-                eprintln!("  [deploy] 已打开 Squirrel，请在菜单中手动选择「重新部署」");
+                style::deploy("已打开 Squirrel，请在菜单中手动选择「重新部署」");
                 return true;
             }
             Err(e) => {
-                eprintln!("  [deploy] Launch Services 打开失败：{e}");
+                style::deploy(format_args!("Launch Services 打开失败：{e}"));
             }
         }
     }
@@ -208,12 +209,14 @@ pub fn try_deploy(no_deploy: bool) {
     }
 
     if deploy() {
-        eprintln!("\n[info] 正在重新部署 Rime，请稍候...");
+        eprintln!();
+        style::info("正在重新部署 Rime，请稍候...");
     } else {
-        eprintln!("\n[info] 词条已添加，请手动重新部署 Rime 使其生效。");
-        eprintln!("  Windows: 右键托盘图标 → 重新部署");
-        eprintln!("  macOS:   系统语言菜单（鼠须管）→ 重新部署");
-        eprintln!("  Linux:   输入法菜单 → 重新部署");
+        eprintln!();
+        style::info("词条已添加，请手动重新部署 Rime 使其生效。");
+        style::detail("Windows: 右键托盘图标 → 重新部署");
+        style::detail("macOS:   系统语言菜单（鼠须管）→ 重新部署");
+        style::detail("Linux:   输入法菜单 → 重新部署");
     }
 }
 

@@ -6,7 +6,9 @@ use adw::encoder::wubi86::Wubi86Encoder;
 use adw::error::{AppError, AppResult};
 use adw::rime::deploy;
 use adw::rime::dir::RimeDirDetector;
+use adw::style;
 use clap::Parser;
+use colored::Colorize;
 use std::fs;
 use std::io::{self, BufRead, Write};
 use std::path::{Path, PathBuf};
@@ -58,14 +60,14 @@ fn ensure_import_tables(lines: &mut Vec<String>) -> bool {
         .unwrap_or(0);
 
     let Some(mut header) = DictHeader::parse(lines) else {
-        eprintln!("  [warn] 未找到 YAML header，跳过");
+        style::attention("未找到 YAML header，跳过");
         return false;
     };
 
     if header.add_import(EXTRA_NAME) {
         let new_header = header.to_lines().to_vec();
         lines.splice(0..old_header_end + 1, new_header);
-        eprintln!("  [info] 已将 {EXTRA_NAME} 添加到 import_tables");
+        style::info(format_args!("已将 {EXTRA_NAME} 添加到 import_tables"));
         true
     } else {
         false
@@ -86,7 +88,7 @@ fn create_extra_dict(path: &Path) -> AppResult<()> {
          ...\n"
     );
     fs::write(path, content)?;
-    eprintln!("  [info] 已创建 {EXTRA_DICT}");
+    style::info(format_args!("已创建 {EXTRA_DICT}"));
     Ok(())
 }
 
@@ -110,13 +112,13 @@ fn build_char_map(paths: &[PathBuf]) -> CharMap {
 
 /// Ask user for codes of missing characters, insert them into char_map.
 /// Returns false if user cancels.
-fn fill_missing_codes(word: &str, missing: &[char], char_map: &mut CharMap) -> AppResult<()> {
-    eprintln!("  [info] \"{word}\" 中存在以下未收录的字: {}",
-        missing.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(" "));
+fn fill_missing_codes(missing: &[char], char_map: &mut CharMap) -> AppResult<()> {
+    style::attention(format_args!("以下字未收录: {}",
+        missing.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(" ")));
 
     let stdin = io::stdin();
     for &ch in missing {
-        print!("  请为 \"{ch}\" 输入五笔编码: ");
+        print!("  请为【{ch}】输入编码: ");
         io::stdout().flush()?;
         let mut input = String::new();
         stdin.lock().read_line(&mut input)?;
@@ -125,7 +127,7 @@ fn fill_missing_codes(word: &str, missing: &[char], char_map: &mut CharMap) -> A
             return Err(AppError::UserCancel);
         }
         char_map.insert(ch, input.clone());
-        eprintln!("    [ok] {ch} → {input}");
+        style::detail(format_args!("已记录  {ch} → {input}"));
     }
     Ok(())
 }
@@ -157,7 +159,7 @@ fn run_cli(args: &Args, rime_dir: &Path) -> AppResult<()> {
             let result = encoder.encode(word, &char_map);
             match result.code {
                 Some(c) => {
-                    eprintln!("  [auto] {word} → {c}");
+                    style::info(format_args!("{word} → {c}"));
                     c
                 }
                 None if !result.missing_chars.is_empty() => {
@@ -167,11 +169,11 @@ fn run_cli(args: &Args, rime_dir: &Path) -> AppResult<()> {
                             result.missing_chars.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(" ")
                         )));
                     }
-                    fill_missing_codes(word, &result.missing_chars, &mut char_map)?;
+                    fill_missing_codes(&result.missing_chars, &mut char_map)?;
                     let encoder = Wubi86Encoder;
                     match encoder.encode(word, &char_map).code {
                         Some(c) => {
-                            eprintln!("  [auto] {word} → {c}");
+                            style::info(format_args!("{word} → {c}"));
                             c
                         }
                         None => return Err(AppError::EncodeFailed(format!("\"{word}\" 编码失败"))),
@@ -186,13 +188,15 @@ fn run_cli(args: &Args, rime_dir: &Path) -> AppResult<()> {
     let entry = Entry::new(word.to_string(), code.clone(), weight);
 
     if dict.add_entry(entry.clone()) {
-        eprintln!("  [ok] {}  {}  {}", entry.word, entry.code, entry.weight);
+        style::success(format_args!("{}  {}  {}", entry.word, entry.code, entry.weight));
+        style::detail("已写入 wubi86_jidian_extra.dict.yaml");
     } else {
         if !args.silent {
             let existing = dict.entries.iter()
                 .find(|e| e.word == entry.word && e.code == entry.code);
             if let Some(e) = existing {
-                eprintln!("  [skip] {}  {}  [权重 {}]", entry.word, entry.code, e.weight);
+                style::attention(format_args!("{}  {}  {}", entry.word, entry.code, e.weight));
+                style::detail("已有相同条目，跳过");
             }
         }
         try_deploy(args.no_deploy);
@@ -244,7 +248,7 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
             let result = encoder.encode(&word, &char_map);
             match result.code {
                 Some(encoded) => {
-                    print!("  -> 自动生成编码：{word} -> {encoded}");
+                    print!("{}", format!("  {word} → {encoded}").cyan());
                     if args.yes {
                         println!();
                         encoded
@@ -255,21 +259,21 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
                         stdin.lock().read_line(&mut confirm)?;
                         let confirm = confirm.trim().to_lowercase();
                         if confirm == "n" || confirm == "no" {
-                            eprintln!("  [skip] 已取消");
+                            style::detail("已取消");
                             continue;
                         }
                         encoded
                     }
                 }
                 None if !result.missing_chars.is_empty() => {
-                    if fill_missing_codes(&word, &result.missing_chars, &mut char_map).is_err() {
-                        eprintln!("  [skip] 已取消");
+                    if fill_missing_codes(&result.missing_chars, &mut char_map).is_err() {
+                        style::detail("已取消");
                         continue;
                     }
                     let encoder = Wubi86Encoder;
                     match encoder.encode(&word, &char_map).code {
                         Some(encoded) => {
-                            print!("  -> 自动生成编码：{word} -> {encoded}");
+                            print!("{}", format!("  {word} → {encoded}").cyan());
                             if args.yes {
                                 println!();
                                 encoded
@@ -280,20 +284,20 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
                                 stdin.lock().read_line(&mut confirm)?;
                                 let confirm = confirm.trim().to_lowercase();
                                 if confirm == "n" || confirm == "no" {
-                                    eprintln!("  [skip] 已取消");
+                                    style::detail("已取消");
                                     continue;
                                 }
                                 encoded
                             }
                         }
                         None => {
-                            eprintln!("  [error] 编码失败，请手动输入编码");
+                            style::error("编码失败，请手动输入编码");
                             continue;
                         }
                     }
                 }
                 _ => {
-                    eprintln!("  [error] 编码失败，请手动输入编码");
+                    style::error("编码失败，请手动输入编码");
                     continue;
                 }
             }
@@ -310,12 +314,13 @@ fn run_interactive(args: &Args, rime_dir: &Path) -> AppResult<()> {
         let entry = Entry::new(word.clone(), code.clone(), weight);
         if dict.add_entry(entry) {
             count += 1;
-            eprintln!("  [ok] {}  {}  {}", word, code, weight);
+            style::success(format_args!("{}  {}  {}", word, code, weight));
         } else if !args.silent {
             let existing = dict.entries.iter()
                 .find(|e| e.word == word && e.code == code);
             if let Some(e) = existing {
-                eprintln!("  [skip] {}  {}  [权重 {}]", word, code, e.weight);
+                style::attention(format_args!("{}  {}  {}", word, code, e.weight));
+                style::detail("已有相同条目，跳过");
             }
         }
     }
@@ -340,7 +345,7 @@ fn main() {
         Some(dir) => {
             let path = PathBuf::from(dir);
             if !path.exists() {
-                eprintln!("[error] 指定的目录不存在：{dir}");
+                style::error(format_args!("指定的目录不存在：{dir}"));
                 std::process::exit(1);
             }
             path
@@ -348,7 +353,7 @@ fn main() {
         None => match detector.detect() {
             Some(path) => path,
             None => {
-                eprintln!("[error] 未找到 Rime 用户目录，请通过 -d 指定或设置 RIME_USER_DIR 环境变量");
+                style::error("未找到 Rime 用户目录，请通过 -d 指定或设置 RIME_USER_DIR 环境变量");
                 std::process::exit(1);
             }
         },
@@ -373,7 +378,7 @@ fn main() {
     };
 
     if let Err(e) = result {
-        eprintln!("[error] {e}");
+        style::error(format_args!("{e}"));
         std::process::exit(1);
     }
 }
