@@ -11,6 +11,9 @@ dependencies:                             # 依赖的其他方案列表
     - pinyin_simp                         # 依赖拼音方案（独立编译，供反查使用）
 
 switches:                                 # 状态开关列表（可在输入法菜单中切换）
+    - name: ascii_mode                    # 中/西文切换开关
+      reset: 0                            # 默认中文
+      states: [中文, 西文]                 # 两种状态显示名称
     - name: full_shape                    # 全角/半角开关
       states: [半角, 全角]                # 两种状态显示名称
     - name: ascii_punct                   # 中西文标点开关
@@ -39,6 +42,11 @@ engine:                                   # 引擎配置：用户按键 → proc
         - punct_translator                # 标点翻译器：将标点段转为对应符号
         - reverse_lookup_translator       # 反查翻译器：用拼音词典反查五笔编码（处理带 reverse_lookup 标签的段）
         - table_translator                # 码表翻译器：查主码表 evan_mixied_wubi_pinyin 生成候选
+
+ascii_composer:                           # 中/西文切换配置
+    switch_key:                           # 切换键行为
+        Shift_L: commit_text              # 左Shift：有编码时先上屏再切西文
+        Shift_R: commit_text              # 右Shift：同上
 
 speller:                                  # 拼写规则配置
                                           # （使用默认规则，无额外配置）
