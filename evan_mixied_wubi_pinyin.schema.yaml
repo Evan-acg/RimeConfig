@@ -8,7 +8,7 @@ description: |                            # 方案描述（多行字符串）
     这是一个自建的五笔拼音混合输入方案     # 描述内容
 
 dependencies:                             # 依赖的其他方案列表
-    - pinyin_simp                         # 依赖"简化字拼音"方案（用于反查）
+    - pinyin_simp                         # 依赖拼音方案（独立编译，供反查使用）
 
 switches:                                 # 状态开关列表（可在输入法菜单中切换）
     - name: full_shape                    # 全角/半角开关

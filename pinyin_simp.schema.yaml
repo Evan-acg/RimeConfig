@@ -1,0 +1,28 @@
+schema:
+  schema_id: pinyin_simp
+  name: "拼音（简化字）"
+  version: "0.1"
+
+switches:
+  - name: full_shape
+    states: [半角, 全角]
+
+engine:
+  segmentors:
+    - abc_segmentor
+    - punct_segmentor
+  translators:
+    - table_translator
+
+speller:
+  alphabet: 'zyxwvutsrqponmlkjihgfedcba'
+  delimiter: " \t"
+
+translator:
+  dictionary: pinyin_simp
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
