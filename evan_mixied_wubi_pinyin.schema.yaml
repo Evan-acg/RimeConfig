@@ -12,7 +12,7 @@ dependencies:                             # 依赖的其他方案列表
 
 switches:                                 # 状态开关列表（可在输入法菜单中切换）
     - name: ascii_mode                    # 中/西文切换开关
-      reset: 1                            # 默认西文
+      reset: 0                            # 默认中文
       states: [中文, 西文]                 # 两种状态显示名称
     - name: full_shape                    # 全角/半角开关
       states: [半角, 全角]                # 两种状态显示名称
@@ -49,12 +49,14 @@ engine:                                   # 引擎配置：用户按键 → proc
           enable_user_dict: false         # 不记录用户词
 
 ascii_composer:                           # 中/西文切换配置
-    good_old_caps_lock: true              # Caps Lock 输出大写字母（传统行为）
+    good_old_caps_lock: true              # Caps Lock LED 亮时输出大写字母
     switch_key:                           # 切换键行为
-        Caps_Lock: clear                  # Caps Lock：清空编码并切换西文/大写
-        Shift_L: commit_code              # 左Shift：有编码时上屏编码字母，再切西文
-        Shift_R: commit_code              # 右Shift：同上
-        Escape: commit_text               # Escape：用于 Vim 适配，先上屏候选项再切西文
+        Caps_Lock: clear                  # 清空编码，切换中/英，同时切换大小写
+        Shift_L: commit_code              # 左Shift：切换中/英
+        Shift_R: noop                     # 右Shift：防误触
+        Control_L: noop                   # 左Ctrl：不切换
+        Control_R: noop                   # 右Ctrl：不切换
+        Escape: commit_text               # Escape：提交候选项再切西文
 
 speller:                                  # 拼写规则配置
                                           # （使用默认规则，无额外配置）
