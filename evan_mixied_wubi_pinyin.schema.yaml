@@ -53,7 +53,7 @@ ascii_composer:                           # 中/西文切换配置
     switch_key:                           # 切换键行为
         Caps_Lock: clear                  # 清空编码，切换中/英，同时切换大小写
         Shift_L: commit_code              # 左Shift：切换中/英
-        Shift_R: noop                     # 右Shift：防误触
+        Shift_R: commit_code              # 右Shift：切换中/英
         Control_L: noop                   # 左Ctrl：不切换
         Control_R: noop                   # 右Ctrl：不切换
         Escape: commit_text               # Escape：提交候选项再切西文
