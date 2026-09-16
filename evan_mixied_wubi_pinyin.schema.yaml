@@ -25,7 +25,7 @@ engine:                                   # 引擎配置：用户按键 → proc
                                           # 若某个 processor 消费了按键（如 punctuator 输出标点），后续 processor 不再处理
         - ascii_composer                  # 判断是否进入西文/大写模式（如按 Shift 切换中英）
         - recognizer                      # 识别特殊模式（如 http:// 开头触发网址识别，或 ` 触发反查）
-        - key_binder                      # 处理快捷键（如 [ ] 翻页、Ctrl+` 唤出方案菜单）
+        - key_binder                      # 处理快捷键（如 [ ] 翻页、Ctrl+Alt+` 唤出方案菜单）
         - speller                         # 拼写处理器：将按键序列拼成编码（如 ww → 五笔码）
         - punctuator                      # 标点符号处理器：将按键映射为标点（如 / → 、）
         - selector                        # 候选词选择器：处理数字键选择候选

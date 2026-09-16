@@ -8,6 +8,8 @@ patch:
   schema_list:
     - {schema: evan_mixied_wubi_pinyin}
     - {schema: pinyin_simp}
+  switcher/hotkeys:
+    - "Control+Alt+grave"
   key_binder/bindings:
     - {accept: "Control+p", send: Up, when: composing}
     - {accept: "Control+n", send: Down, when: composing}
